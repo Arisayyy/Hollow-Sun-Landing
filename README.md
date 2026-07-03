@@ -6,7 +6,13 @@ Simple Astro landing page for Hollow Sun.
 
 | Command | Action |
 | --- | --- |
-| `npm install` | Install dependencies |
-| `npm run dev` | Start the local development server |
-| `npm run build` | Build the production site to `dist/` |
-| `npm run preview` | Preview the production build locally |
+| `pnpm install` | Install dependencies |
+| `pnpm dev` | Start the Astro development server |
+| `pnpm build` | Build the Cloudflare Workers bundle to `dist/` |
+| `pnpm preview` | Preview the Worker locally with Wrangler |
+| `pnpm deploy` | Build and deploy to Cloudflare Workers |
+
+## Cloudflare Workers
+
+This project uses Astro's Cloudflare adapter and `wrangler.jsonc` so the built Worker entry point is `dist/_worker.js/index.js` and static assets are served from `dist/`.
+

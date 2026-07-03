@@ -15,8 +15,18 @@ const pageTitle = 'Hollow Sun';
   <body>
     <canvas
       id="hollow-sun-shader"
-      aria-label="Animated CRT dither ASCII shader in matplotlib jet colors"
+      aria-label="Interactive CRT alphabet ASCII shader in spectral plasma colors"
     ></canvas>
+
+    <div class="ascii-field" aria-hidden="true">
+      {Array.from({ length: 9 }).map((_, row) => (
+        <div class="ascii-row" style={`--row: ${row}`}>
+          {'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((letter, index) => (
+            <span style={`--i: ${index}`}>{letter}</span>
+          ))}
+        </div>
+      ))}
+    </div>
 
     <main>
       <p class="eyebrow">signal acquired</p>
@@ -54,6 +64,8 @@ const pageTitle = 'Hollow Sun';
           uniform vec2 uResolution;
           uniform float uTime;
           uniform float uPixelRatio;
+          uniform vec2 uPointer;
+          uniform float uPointerForce;
 
           float hash(vec2 p) {
             p = fract(p * vec2(123.34, 456.21));
@@ -96,33 +108,38 @@ const pageTitle = 'Hollow Sun';
             ), 0.0, 1.0);
           }
 
-          float glyph(vec2 cellUv, float brightness) {
+          float segment(vec2 p, vec2 a, vec2 b, float w) {
+            vec2 pa = p - a;
+            vec2 ba = b - a;
+            float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+            return smoothstep(w, 0.0, length(pa - ba * h));
+          }
+
+          float alphabetGlyph(vec2 cellUv, float glyphIndex, float brightness) {
             vec2 p = cellUv * 2.0 - 1.0;
-            float line = 0.0;
-            float bar = smoothstep(0.18, 0.0, abs(p.x));
-            float dash = smoothstep(0.16, 0.0, abs(p.y));
-            float diagA = smoothstep(0.12, 0.0, abs(p.x - p.y));
-            float diagB = smoothstep(0.12, 0.0, abs(p.x + p.y));
-            float ring = smoothstep(0.16, 0.0, abs(length(p) - 0.58));
-            float dot = smoothstep(0.32, 0.02, length(p));
+            float top = segment(p, vec2(-0.52, 0.66), vec2(0.52, 0.66), 0.115);
+            float mid = segment(p, vec2(-0.48, 0.0), vec2(0.48, 0.0), 0.105);
+            float bottom = segment(p, vec2(-0.52, -0.66), vec2(0.52, -0.66), 0.115);
+            float leftTop = segment(p, vec2(-0.58, 0.58), vec2(-0.58, 0.02), 0.105);
+            float leftBottom = segment(p, vec2(-0.58, -0.02), vec2(-0.58, -0.58), 0.105);
+            float rightTop = segment(p, vec2(0.58, 0.58), vec2(0.58, 0.02), 0.105);
+            float rightBottom = segment(p, vec2(0.58, -0.02), vec2(0.58, -0.58), 0.105);
+            float diagA = segment(p, vec2(-0.58, -0.62), vec2(0.58, 0.62), 0.09);
+            float diagB = segment(p, vec2(-0.58, 0.62), vec2(0.58, -0.62), 0.09);
+            float curve = smoothstep(0.14, 0.0, abs(length(p * vec2(0.92, 1.12)) - 0.63));
 
-            if (brightness < 0.16) {
-              line = dot * 0.24;
-            } else if (brightness < 0.32) {
-              line = dash;
-            } else if (brightness < 0.48) {
-              line = max(dash, bar * 0.62);
-            } else if (brightness < 0.64) {
-              line = max(diagA, diagB);
-            } else if (brightness < 0.80) {
-              line = max(max(dash, bar), ring * 0.56);
-            } else {
-              line = max(max(max(dash, bar), diagA), max(diagB, ring));
-            }
+            float g = mod(glyphIndex, 26.0);
+            float sevenSeg = top + mid * step(4.0, mod(g, 9.0)) + bottom * step(2.0, mod(g, 7.0));
+            sevenSeg += leftTop * step(1.0, mod(g, 5.0)) + leftBottom * step(2.0, mod(g, 6.0));
+            sevenSeg += rightTop * step(0.5, mod(g, 4.0)) + rightBottom * step(3.0, mod(g, 8.0));
 
-            vec2 edge = smoothstep(vec2(0.02), vec2(0.14), cellUv) *
-              smoothstep(vec2(0.02), vec2(0.14), 1.0 - cellUv);
-            return line * edge.x * edge.y;
+            float angular = max(diagA * step(8.0, g), diagB * step(13.0, g));
+            float rounded = curve * step(18.0, g);
+            float letter = clamp(sevenSeg + angular + rounded, 0.0, 1.0);
+            float dot = smoothstep(0.22, 0.02, length(p - vec2(0.0, -0.72))) * step(0.82, brightness);
+            vec2 edge = smoothstep(vec2(0.02), vec2(0.13), cellUv) *
+              smoothstep(vec2(0.02), vec2(0.13), 1.0 - cellUv);
+            return max(letter, dot) * edge.x * edge.y;
           }
 
           void main() {
@@ -135,6 +152,11 @@ const pageTitle = 'Hollow Sun';
             vec2 p = (crtUv * uResolution - 0.5 * uResolution) / min(uResolution.x, uResolution.y);
 
             float t = uTime * 0.26;
+            vec2 pointerUv = uPointer;
+            vec2 pointer = (pointerUv * uResolution - 0.5 * uResolution) / min(uResolution.x, uResolution.y);
+            vec2 pull = p - pointer;
+            float pointerGlow = exp(-5.5 * dot(pull, pull)) * uPointerForce;
+            p += normalize(pull + 0.0001) * pointerGlow * 0.08;
             float radius = length(p);
             float angle = atan(p.y, p.x);
             float corona = 1.0 - smoothstep(0.18, 0.72, radius);
@@ -144,6 +166,7 @@ const pageTitle = 'Hollow Sun';
             float plasma = fbm(p * 3.4 + vec2(t, -t * 0.7));
             float rays = pow(max(0.0, sin(angle * 17.0 + plasma * 8.0 + t * 7.0)), 5.0);
             float signal = corona * hollow + rim * (1.4 + wave) + rays * (1.0 - smoothstep(0.25, 0.95, radius));
+            signal += pointerGlow * (1.8 + 0.9 * sin(angle * 12.0 - uTime * 8.0));
             signal += 0.22 * fbm(p * 10.0 - vec2(t * 1.7));
             signal *= 1.0 - smoothstep(0.78, 1.04, radius);
 
@@ -152,9 +175,10 @@ const pageTitle = 'Hollow Sun';
             vec2 cellUv = fract(frag / cellSize);
             float dither = hash(cell + floor(uTime * 18.0)) - 0.5;
             float quantized = floor(clamp(signal + dither * 0.18, 0.0, 1.0) * 9.0) / 9.0;
-            float ascii = glyph(cellUv, quantized);
+            float glyphIndex = mod(cell.x + cell.y * 7.0 + floor(signal * 12.0) + floor(uTime * 2.0), 26.0);
+            float ascii = alphabetGlyph(cellUv, glyphIndex, quantized);
 
-            vec3 color = jet(quantized * 0.96 + 0.04) * ascii;
+            vec3 color = jet(quantized * 0.96 + 0.04 + pointerGlow * 0.12) * ascii;
             color += jet(signal) * 0.12 * quantized;
 
             float scanline = 0.82 + 0.18 * sin(frag.y * 3.14159);
@@ -205,6 +229,9 @@ const pageTitle = 'Hollow Sun';
         const resolutionLocation = gl.getUniformLocation(program, 'uResolution');
         const timeLocation = gl.getUniformLocation(program, 'uTime');
         const pixelRatioLocation = gl.getUniformLocation(program, 'uPixelRatio');
+        const pointerLocation = gl.getUniformLocation(program, 'uPointer');
+        const pointerForceLocation = gl.getUniformLocation(program, 'uPointerForce');
+        const pointer = { x: 0.5, y: 0.5, targetX: 0.5, targetY: 0.5, force: 0.0, targetForce: 0.0 };
         let width = 0;
         let height = 0;
         let pixelRatio = 1;
@@ -221,8 +248,29 @@ const pageTitle = 'Hollow Sun';
           }
         };
 
+        const setPointer = (event) => {
+          pointer.targetX = event.clientX / window.innerWidth;
+          pointer.targetY = 1 - event.clientY / window.innerHeight;
+          pointer.targetForce = event.buttons ? 1.45 : 0.86;
+        };
+
+        window.addEventListener('pointermove', setPointer, { passive: true });
+        window.addEventListener('pointerdown', (event) => {
+          setPointer(event);
+          pointer.targetForce = 1.75;
+        });
+        window.addEventListener('pointerup', () => {
+          pointer.targetForce = 0.54;
+        });
+        window.addEventListener('pointerleave', () => {
+          pointer.targetForce = 0.0;
+        });
+
         const render = (now) => {
           resize();
+          pointer.x += (pointer.targetX - pointer.x) * 0.18;
+          pointer.y += (pointer.targetY - pointer.y) * 0.18;
+          pointer.force += (pointer.targetForce - pointer.force) * 0.12;
           gl.useProgram(program);
           gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
           gl.enableVertexAttribArray(positionLocation);
@@ -230,6 +278,8 @@ const pageTitle = 'Hollow Sun';
           gl.uniform2f(resolutionLocation, width, height);
           gl.uniform1f(timeLocation, now * 0.001);
           gl.uniform1f(pixelRatioLocation, pixelRatio);
+          gl.uniform2f(pointerLocation, pointer.x, pointer.y);
+          gl.uniform1f(pointerForceLocation, pointer.force);
           gl.drawArrays(gl.TRIANGLES, 0, 6);
           window.requestAnimationFrame(render);
         };
@@ -296,6 +346,61 @@ const pageTitle = 'Hollow Sun';
     image-rendering: pixelated;
   }
 
+
+  .ascii-field {
+    position: fixed;
+    inset: -8vh -6vw;
+    z-index: 1;
+    display: grid;
+    align-content: space-around;
+    overflow: hidden;
+    color: rgba(130, 240, 255, 0.18);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: clamp(1.1rem, 2.6vw, 3.8rem);
+    font-weight: 800;
+    letter-spacing: clamp(0.18rem, 0.78vw, 1.15rem);
+    line-height: 1;
+    mix-blend-mode: screen;
+    opacity: 0.82;
+    perspective: 42rem;
+    pointer-events: none;
+    text-transform: uppercase;
+  }
+
+  .ascii-row {
+    display: flex;
+    justify-content: center;
+    gap: clamp(0.12rem, 0.45vw, 0.7rem);
+    min-width: 140vw;
+    text-shadow:
+      0 0 0.4rem rgba(0, 240, 255, 0.45),
+      0 0 1.4rem rgba(255, 196, 0, 0.16);
+    transform: translateX(calc((var(--row) - 4) * -2.7rem)) rotateZ(calc((var(--row) - 4) * -0.7deg));
+    animation: alphabet-drift 18s linear infinite;
+    animation-delay: calc(var(--row) * -1.8s);
+  }
+
+  .ascii-row:nth-child(even) {
+    color: rgba(255, 202, 64, 0.13);
+    animation-direction: reverse;
+  }
+
+  .ascii-row span {
+    display: inline-block;
+    filter: blur(0.2px);
+    transform: translateY(calc(sin(var(--i)) * 0.16em));
+  }
+
+  @keyframes alphabet-drift {
+    from {
+      translate: -4rem 0;
+    }
+
+    to {
+      translate: 4rem 0;
+    }
+  }
+
   main {
     position: relative;
     z-index: 2;
@@ -348,6 +453,10 @@ const pageTitle = 'Hollow Sun';
     line-height: 1.8;
   }
 
+  .no-webgl .ascii-field {
+    color: rgba(255, 255, 255, 0.34);
+  }
+
   .no-webgl #hollow-sun-shader {
     background:
       repeating-linear-gradient(90deg, #0014ff 0 0.75rem, #00b5ff 0.75rem 1.5rem, #00ff63 1.5rem 2.25rem, #fff000 2.25rem 3rem, #ff7a00 3rem 3.75rem, #b60000 3.75rem 4.5rem),
@@ -357,6 +466,10 @@ const pageTitle = 'Hollow Sun';
   @media (prefers-reduced-motion: reduce) {
     body::before {
       opacity: 0.28;
+    }
+
+    .ascii-row {
+      animation: none;
     }
   }
 </style>

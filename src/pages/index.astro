@@ -46,7 +46,7 @@ const pageTitle = 'Hollow Sun Industries';
 
             <div class="name-row">
               <span class="unit-number">HSI</span>
-              <h1 id="brand-title">HOLLOW<br />SUN<br />INDUSTRIES</h1>
+              <h1 id="brand-title">HOLLOW SUN<br />INDUSTRIES</h1>
             </div>
 
             <p class="spec-copy">
@@ -273,7 +273,7 @@ const pageTitle = 'Hollow Sun Industries';
     margin: 0;
     color: var(--brand-color);
     font-family: Arial, Helvetica, sans-serif;
-    font-size: clamp(2.4rem, 5.9vw, 5rem);
+    font-size: clamp(2.05rem, 4.9vw, 4.2rem);
     font-weight: 300;
     letter-spacing: -0.06em;
     line-height: 0.88;
@@ -355,69 +355,74 @@ const pageTitle = 'Hollow Sun Industries';
 
   @media (max-width: 760px) {
     .landing-shell {
-      display: flex;
       min-height: 100svh;
-      flex-direction: column;
-      gap: 2.5rem;
-      overflow: visible;
+      overflow: hidden;
+      padding: clamp(0.85rem, 3vw, 1.25rem);
     }
 
     .topline {
-      grid-template-columns: 1fr;
-      gap: 0.45rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(0.35rem, 1.8vw, 0.8rem);
+      font-size: clamp(0.34rem, 1.45vw, 0.58rem);
+      letter-spacing: 0.24em;
     }
 
-    .topline span,
-    .topline span:nth-child(2),
+    .topline span:nth-child(2) {
+      text-align: center;
+    }
+
     .topline span:nth-child(3) {
-      text-align: left;
+      text-align: right;
     }
 
     .hero-card {
-      position: relative;
-      top: auto;
-      left: auto;
-      width: 100%;
-      margin: auto 0;
-      transform: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: min(38rem, calc(100vw - 1.7rem));
+      transform: translate(-50%, -48%);
     }
 
     .brand-lockup {
-      grid-template-columns: 1fr;
-      justify-items: start;
+      grid-template-columns: minmax(5rem, 31vw) minmax(0, 1fr);
+      gap: clamp(0.65rem, 2.2vw, 1.2rem);
     }
 
     .brand-mark {
-      width: min(58vw, 13rem);
+      width: 100%;
     }
 
-    .reticle-top {
-      top: 3%;
-      right: 4%;
+    .airframe-copy,
+    .payload-copy,
+    .spec-copy,
+    .revision-copy {
+      font-size: clamp(0.52rem, 2vw, 0.78rem);
+      letter-spacing: 0.12em;
     }
 
-    .reticle-left,
-    .reticle-right {
-      display: none;
+    .unit-number {
+      min-height: clamp(2.45rem, 11vw, 4.2rem);
+      font-size: clamp(1.85rem, 8.8vw, 3.6rem);
+    }
+
+    h1 {
+      font-size: clamp(1.45rem, 6.8vw, 2.9rem);
     }
 
     .datablock {
-      position: relative;
-      bottom: auto;
-      left: auto;
-      margin-top: auto;
+      position: absolute;
+      bottom: clamp(0.85rem, 3vw, 1.25rem);
+      left: clamp(0.85rem, 3vw, 1.25rem);
+      max-width: calc(100vw - 1.7rem);
+      font-size: clamp(0.36rem, 1.45vw, 0.55rem);
+      letter-spacing: 0.12em;
     }
   }
 
   @media (max-width: 430px) {
-    .name-row {
-      align-items: flex-start;
-      flex-direction: column;
-    }
-
     .mesh-grid {
-      grid-template-columns: 1fr;
-      gap: 0;
+      grid-template-columns: repeat(2, max-content);
+      gap: clamp(0.85rem, 4vw, 1.5rem);
     }
   }
 </style>

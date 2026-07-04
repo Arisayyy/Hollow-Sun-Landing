@@ -1,0 +1,56 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Hollow Sun Industries</title>
+  <desc id="desc">Black open graph image with white Hollow Sun Industries landing page lockup.</desc>
+  <rect width="1200" height="630" fill="#020202"/>
+
+  <g fill="#E8E8E8" stroke="#E8E8E8" stroke-width="0">
+    <g transform="translate(144 92)" stroke="#E8E8E8" stroke-width="4" fill="none">
+      <circle cx="32" cy="32" r="30"/>
+      <ellipse cx="32" cy="32" rx="15" ry="30"/>
+      <circle cx="112" cy="32" r="30" fill="#E8E8E8"/>
+      <circle cx="192" cy="32" r="30"/>
+      <path d="M171 11L213 53M213 11L171 53" stroke-linecap="square"/>
+    </g>
+
+    <g opacity="0.78" font-family="'Courier New', Courier, monospace" font-size="24" letter-spacing="4" fill="#E8E8E8">
+      <text x="144" y="190">FORCE PROTECTION PLATFORM</text>
+      <text x="144" y="220">DEVELOPMENT BUILD HS-02.6</text>
+    </g>
+
+    <g transform="translate(144 250) scale(1.92)" fill="#E8E8E8">
+      <path d="m94 58 3.8-6 34.3 21.6h16.4l-45.9-29.8 21.8-34.3h-99l21.8 34.4-45.8 29.7h16.4l34.5-21.6 3.5 6-30.4 19.3c9.7 9.8 26.9 22.5 49.8 22.5 18.4 0 36.3-9.2 49.2-22.5l-30.4-19.3zm-19 13.5-32.8-53.3h65.3l-32.5 53.3zm0 19.6c-11.3 0-21.8-4-34.8-12.8l20.4-12.6 0.9 1.4c-0.2 1-0.3 2.1-0.3 3.3 0 7 5.5 13.9 13.8 13.9s13.8-6.6 13.8-13.6c0-1-0.1-2.1-0.3-3.4l1-1.6 20 12.6c-8.8 6.3-20.2 12.8-34.5 12.8z"/>
+      <path d="m92.6 103.4-17.6 22.6-17.2-22.5c-4-1-11-3.7-19.3-8.9l36.5 45.9 36.3-46.1c-5.8 3.5-13 7.3-18.7 9z"/>
+    </g>
+
+    <g transform="translate(470 260)">
+      <g opacity="0.78" font-family="'Courier New', Courier, monospace" font-size="24" letter-spacing="4" fill="#E8E8E8">
+        <text x="0" y="0">SYSTEM STATUS</text>
+        <text x="0" y="30">IN DEVELOPMENT</text>
+      </g>
+
+      <text x="0" y="128" font-family="Arial, Helvetica, sans-serif" font-size="78" font-weight="300" letter-spacing="-5" fill="#E8E8E8">HOLLOW SUN</text>
+      <text x="0" y="196" font-family="Arial, Helvetica, sans-serif" font-size="78" font-weight="300" letter-spacing="-5" fill="#E8E8E8">INDUSTRIES</text>
+
+      <g opacity="0.78" font-family="'Courier New', Courier, monospace" font-size="21" letter-spacing="3.3" fill="#E8E8E8">
+        <text x="0" y="250">SECURING THE WORLD’S MOST CRITICAL INFRASTRUCTURE. PERMANENTLY.</text>
+        <text x="0" y="280">PRIVATE TECHNICAL PREVIEW</text>
+        <text x="0" y="330">REV 02.6</text>
+      </g>
+    </g>
+  </g>
+
+  <g stroke="#E8E8E8" stroke-opacity="0.82" stroke-width="4" fill="none">
+    <g transform="translate(990 94)">
+      <circle cx="34" cy="34" r="31"/>
+      <path d="M-24 34H92M34 -24V92"/>
+    </g>
+    <g transform="translate(142 510)">
+      <circle cx="34" cy="34" r="31"/>
+      <path d="M-24 34H92M34 -24V92"/>
+    </g>
+    <g transform="translate(990 510)">
+      <circle cx="34" cy="34" r="31"/>
+      <path d="M-24 34H92M34 -24V92"/>
+    </g>
+  </g>
+</svg>

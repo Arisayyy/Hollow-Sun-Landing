@@ -1,9 +1,9 @@
 ---
 const pageTitle = 'Hollow Sun Industries';
 const description =
-  'Hollow Sun Industries. Securing the world\u2019s most critical infrastructure. Permanently. Private technical preview.';
+  'Securing the world\u2019s most critical infrastructure. Permanently. Private technical preview.';
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const ogImage = new URL('/og.png', Astro.site).href;
+const ogImage = new URL('/og.png', Astro.url.origin).href;
 // Only index the production host. Preview / deploy-preview hosts stay noindex.
 const isProd = Astro.url.host === 'hollowsun.ai' || Astro.url.host === 'www.hollowsun.ai';
 ---
@@ -354,5 +354,6 @@ const isProd = Astro.url.host === 'hollowsun.ai' || Astro.url.host === 'www.holl
 
   }
 </style>
+
 
 

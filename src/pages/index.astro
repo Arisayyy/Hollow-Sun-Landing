@@ -1,13 +1,48 @@
 ---
 const pageTitle = 'Hollow Sun Industries';
+const description =
+  'Hollow Sun Industries. Securing the world\u2019s most critical infrastructure. Permanently. Private technical preview.';
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL('/og.png', Astro.site).href;
+// Only index the production host. Preview / deploy-preview hosts stay noindex.
+const isProd = Astro.url.host === 'hollowsun.ai' || Astro.url.host === 'www.hollowsun.ai';
 ---
 
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Hollow Sun Industries landing page." />
+    <link rel="canonical" href={canonical} />
+    {isProd ? (
+      <meta name="robots" content="index, follow" />
+    ) : (
+      <meta name="robots" content="noindex, nofollow" />
+    )}
     <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Hollow Sun Industries" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:secure_url" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Hollow Sun Industries" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content="Hollow Sun Industries" />
+
+    <meta name="theme-color" content="#020202" />
   </head>
   <body>
     <main class="landing-shell" aria-label={pageTitle}>
@@ -319,3 +354,5 @@ const pageTitle = 'Hollow Sun Industries';
 
   }
 </style>
+
+
